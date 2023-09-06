@@ -1,0 +1,6 @@
+use:
+  custom:
+    repository: true
+
+fakestore:
+  url: https://fakestoreapi.com
