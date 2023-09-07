@@ -2,8 +2,8 @@ package dev.biswajit.ecomm.productservice.controller;
 
 import dev.biswajit.ecomm.productservice.dto.ProductDto;
 import dev.biswajit.ecomm.productservice.model.Product;
-import dev.biswajit.ecomm.productservice.service.FakeStoreProductService;
 import dev.biswajit.ecomm.productservice.service.ProductService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
@@ -15,13 +15,12 @@ public class ProductController {
 
     private final ProductService productService;
 
-    public ProductController(FakeStoreProductService productService) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
-    @GetMapping("")
+    @GetMapping("/")
     public Mono<List<ProductDto>> getAll() {
-
         return productService.allProducts();
     }
 
@@ -31,6 +30,7 @@ public class ProductController {
     }
 
     @PostMapping("/")
+    @ResponseStatus(code = HttpStatus.CREATED)
     public Mono<ProductDto> add(@RequestBody ProductDto newProduct) {
         return productService.add(newProduct);
     }
