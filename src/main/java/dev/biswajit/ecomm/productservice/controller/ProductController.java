@@ -36,12 +36,13 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public Mono<String> updateBy(@PathVariable("id") Long productId, @RequestBody Product product) {
-        return Mono.just("apple");
+    public Mono<ProductDto> updateBy(@PathVariable("id") Long id, @RequestBody ProductDto updateProductDto) {
+        return productService.updateBy(id, updateProductDto);
     }
 
     @DeleteMapping("/{id}")
     public Mono<ProductDto> deleteBy(@PathVariable Long id) {
         return productService.deleteBy(id);
     }
+
 }

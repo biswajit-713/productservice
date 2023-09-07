@@ -13,4 +13,6 @@ public interface ProductService {
     Mono<ProductDto> add(ProductDto newProduct);
 
     Mono<ProductDto> deleteBy(Long id);
+
+    Mono<ProductDto> updateBy(Long id, ProductDto updateProductDto);
 }

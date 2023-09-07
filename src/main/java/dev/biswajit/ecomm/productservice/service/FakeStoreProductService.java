@@ -86,4 +86,19 @@ public class FakeStoreProductService implements ProductService {
                 new ProductDto(it.getId(), it.getTitle(), it.getPrice(), it.getCategory(), it.getDescription(),
                         it.getImageUrl())).log();
     }
+
+    @Override
+    public Mono<ProductDto> updateBy(Long id, ProductDto updateProductDto) {
+        Mono<FakeStoreProductDto> fakeStoreProductDto = webclient
+                .put()
+                .uri("/products/{id}", id)
+                .body(BodyInserters.fromValue(updateProductDto))
+                .retrieve()
+                .bodyToMono(FakeStoreProductDto.class)
+                .log();
+
+        return fakeStoreProductDto.map(it ->
+                new ProductDto(it.getId(), it.getTitle(), it.getPrice(), it.getCategory(),
+                        it.getDescription(), it.getImageUrl())).log();
+    }
 }
