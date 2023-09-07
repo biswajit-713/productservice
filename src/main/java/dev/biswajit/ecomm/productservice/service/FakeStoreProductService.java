@@ -2,6 +2,7 @@ package dev.biswajit.ecomm.productservice.service;
 
 import dev.biswajit.ecomm.productservice.dto.FakeStoreProductDto;
 import dev.biswajit.ecomm.productservice.dto.ProductDto;
+import dev.biswajit.ecomm.productservice.exception.ProductNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -35,9 +36,12 @@ public class FakeStoreProductService implements ProductService {
                 .bodyToMono(FakeStoreProductDto.class)
                 .log();
 
-        return fakeStoreProduct.map(it ->
-                new ProductDto(it.getId(), it.getTitle(), it.getPrice(), it.getCategory(), it.getDescription(),
-                        it.getImageUrl())).log();
+        return fakeStoreProduct
+                .switchIfEmpty(Mono.error(new ProductNotFoundException("no product with id " + id + " found")))
+                .map(product ->
+                    new ProductDto(product.getId(), product.getTitle(), product.getPrice(), product.getCategory(),
+                            product.getDescription(), product.getImageUrl()))
+                .log();
     }
 
     @Override

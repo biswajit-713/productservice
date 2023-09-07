@@ -1,13 +1,17 @@
 package dev.biswajit.ecomm.productservice.controller;
 
 import dev.biswajit.ecomm.productservice.dto.ProductDto;
-import dev.biswajit.ecomm.productservice.model.Product;
+import dev.biswajit.ecomm.productservice.exception.ErrorDto;
+import dev.biswajit.ecomm.productservice.exception.ProductNotFoundException;
 import dev.biswajit.ecomm.productservice.service.ProductService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+
+import static dev.biswajit.ecomm.productservice.exception.ErrorCode.PRODUCT_NOT_FOUND;
 
 @RestController
 @RequestMapping("/products")
@@ -45,4 +49,9 @@ public class ProductController {
         return productService.deleteBy(id);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<Mono<ErrorDto>> productNotFoundException(ProductNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Mono.just(new ErrorDto(PRODUCT_NOT_FOUND, exception.getMessage())));
+    }
 }
