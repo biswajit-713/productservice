@@ -2,8 +2,8 @@ use:
   custom:
     repository: true
 
-fakestore:
-  url: https://fakestoreapi.com
-
-service:
-  type: FAKE_STORE_SERVICE
+app:
+  fakestore:
+    url: https://fakestoreapi.com
+  service:
+    type: FAKE_STORE_SERVICE

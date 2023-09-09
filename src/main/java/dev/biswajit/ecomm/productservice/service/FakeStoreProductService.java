@@ -1,6 +1,7 @@
 package dev.biswajit.ecomm.productservice.service;
 
-import dev.biswajit.ecomm.productservice.dto.FakeStoreProductDto;
+import dev.biswajit.ecomm.productservice.thirdparty.FakeStoreClient;
+import dev.biswajit.ecomm.productservice.thirdparty.ThirdPartyProductDto;
 import dev.biswajit.ecomm.productservice.dto.ProductDto;
 import dev.biswajit.ecomm.productservice.exception.ProductNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,94 +16,60 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 @Service("FAKE_STORE_SERVICE")
-@ConditionalOnProperty(name= "service.type", havingValue = "FAKE_STORE_SERVICE")
+@ConditionalOnProperty(name = "app.service.type", havingValue = "FAKE_STORE_SERVICE")
 public class FakeStoreProductService implements ProductService {
 
-    private final WebClient webclient ;
+    private FakeStoreClient fakeStoreClient;
 
-    @Value("${fakestore.url}")
-    private String fakeStoreUrl = "https://fakestoreapi.com";
-
-    public FakeStoreProductService(@Autowired WebClient.Builder builder) {
-        this.webclient = builder.baseUrl(fakeStoreUrl).build();
+    public FakeStoreProductService(FakeStoreClient fakeStoreClient) {
+        this.fakeStoreClient = fakeStoreClient;
     }
 
     @Override
     public Mono<ProductDto> productBy(Long id) {
-        Mono<FakeStoreProductDto> fakeStoreProduct = webclient
-                .get()
-                .uri("/products/{id}", id)
-                .retrieve()
-                .bodyToMono(FakeStoreProductDto.class)
-                .log();
-
-        return fakeStoreProduct
-                .switchIfEmpty(Mono.error(new ProductNotFoundException("no product with id " + id + " found")))
+        return fakeStoreClient.getProductBy(id)
+                .switchIfEmpty(Mono.error(ProductNotFoundException.with("no product with id " + id + " found")))
                 .map(product ->
-                    new ProductDto(product.getId(), product.getTitle(), product.getPrice(), product.getCategory(),
-                            product.getDescription(), product.getImageUrl()))
+                        new ProductDto(product.getId(), product.getTitle(), product.getPrice(), product.getCategory(),
+                                product.getDescription(), product.getImageUrl()))
                 .log();
     }
 
     @Override
     public Mono<List<ProductDto>> allProducts() {
-        Mono<List<FakeStoreProductDto>> fakeStoreProducts = webclient
-                .get()
-                .uri("/products")
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<FakeStoreProductDto>>() {
-                })
-                .log();
-
-        return fakeStoreProducts.flatMap(list -> {
-            List<ProductDto> products = list.stream().map(it -> new ProductDto(it.getId(), it.getTitle(), it.getPrice(), it.getCategory(),
-                    it.getDescription(), it.getImageUrl()
-            )).toList();
-            return Mono.just(products);
-        });
+        return fakeStoreClient.getAllProducts()
+                .flatMap(list -> {
+                    List<ProductDto> products = list.stream().map(it -> new ProductDto(it.getId(), it.getTitle(), it.getPrice(), it.getCategory(),
+                            it.getDescription(), it.getImageUrl()
+                    )).toList();
+                    return Mono.just(products);
+                });
     }
 
     @Override
     public Mono<ProductDto> add(ProductDto newProduct) {
-        Mono<FakeStoreProductDto> productFromFakeStore = webclient
-                .post()
-                .uri("/products")
-                .body(BodyInserters.fromValue(newProduct))
-                .retrieve()
-                .bodyToMono(FakeStoreProductDto.class)
-                .log();
 
-        return productFromFakeStore.map(it ->
-                new ProductDto(it.getId(), it.getTitle(), it.getPrice(), it.getCategory(), it.getDescription(),
-                        it.getImageUrl())).log();
+        return fakeStoreClient.add(newProduct)
+                .map(it ->
+                        new ProductDto(it.getId(), it.getTitle(), it.getPrice(), it.getCategory(), it.getDescription(),
+                                it.getImageUrl())).log();
     }
 
     @Override
     public Mono<ProductDto> deleteBy(Long id) {
-        Mono<FakeStoreProductDto> deletedProduct = webclient
-                .delete()
-                .uri("/products/{id}", id)
-                .retrieve()
-                .bodyToMono(FakeStoreProductDto.class)
-                .log();
 
-        return deletedProduct.map(it ->
-                new ProductDto(it.getId(), it.getTitle(), it.getPrice(), it.getCategory(), it.getDescription(),
-                        it.getImageUrl())).log();
+        return fakeStoreClient.deleteBy(id)
+                .map(it ->
+                        new ProductDto(it.getId(), it.getTitle(), it.getPrice(), it.getCategory(), it.getDescription(),
+                                it.getImageUrl())).log();
     }
 
     @Override
     public Mono<ProductDto> updateBy(Long id, ProductDto updateProductDto) {
-        Mono<FakeStoreProductDto> fakeStoreProductDto = webclient
-                .put()
-                .uri("/products/{id}", id)
-                .body(BodyInserters.fromValue(updateProductDto))
-                .retrieve()
-                .bodyToMono(FakeStoreProductDto.class)
-                .log();
 
-        return fakeStoreProductDto.map(it ->
-                new ProductDto(it.getId(), it.getTitle(), it.getPrice(), it.getCategory(),
-                        it.getDescription(), it.getImageUrl())).log();
+        return fakeStoreClient.updateBy(id, updateProductDto)
+                .map(it ->
+                        new ProductDto(it.getId(), it.getTitle(), it.getPrice(), it.getCategory(),
+                                it.getDescription(), it.getImageUrl())).log();
     }
 }

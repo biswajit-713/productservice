@@ -1,6 +1,5 @@
-package dev.biswajit.ecomm.productservice.dto;
+package dev.biswajit.ecomm.productservice.thirdparty;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
@@ -9,7 +8,7 @@ import lombok.*;
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
-public class FakeStoreProductDto {
+public class ThirdPartyProductDto {
     private Long id;
     private String title;
     private String price;
