@@ -49,9 +49,4 @@ public class ProductController {
         return productService.deleteBy(id);
     }
 
-    @ExceptionHandler
-    public ResponseEntity<Mono<ErrorDto>> productNotFoundException(ProductNotFoundException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Mono.just(new ErrorDto(PRODUCT_NOT_FOUND, exception.getMessage())));
-    }
 }
