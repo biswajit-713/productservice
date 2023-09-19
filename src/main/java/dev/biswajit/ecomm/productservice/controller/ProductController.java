@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.UUID;
 
 import static dev.biswajit.ecomm.productservice.exception.ErrorCode.PRODUCT_NOT_FOUND;
 
@@ -29,7 +30,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public Mono<ProductDto> getBy(@PathVariable("id") Long productId) {
+    public Mono<ProductDto> getBy(@PathVariable("id") Long productId) throws ProductNotFoundException {
         return productService.productBy(productId);
     }
 
@@ -40,12 +41,12 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public Mono<ProductDto> updateBy(@PathVariable("id") Long id, @RequestBody ProductDto updateProductDto) {
+    public Mono<ProductDto> updateBy(@PathVariable("id") Long id, @RequestBody ProductDto updateProductDto) throws ProductNotFoundException {
         return productService.updateBy(id, updateProductDto);
     }
 
     @DeleteMapping("/{id}")
-    public Mono<ProductDto> deleteBy(@PathVariable Long id) {
+    public Mono<ProductDto> deleteBy(@PathVariable Long id) throws ProductNotFoundException {
         return productService.deleteBy(id);
     }
 
