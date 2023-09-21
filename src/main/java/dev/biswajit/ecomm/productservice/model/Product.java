@@ -17,7 +17,7 @@ public class Product {
 
     private String name;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 

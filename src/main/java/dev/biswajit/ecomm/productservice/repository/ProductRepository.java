@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository(value = "PRODUCT_REPOSITORY")
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
+//    Mono<Product> findProductById(Long id);
 }

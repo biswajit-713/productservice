@@ -42,7 +42,14 @@ public class SelfManagedProductService implements ProductService{
                 .orElseThrow(() -> ProductNotFoundException.with(String.format("Product with %d not found", id)));
         ProductDto productDto = new ProductDto(productFound.getId(), productFound.getName(), productFound.getPrice().getValue().toString(),
                 productFound.getCategory().getTitle(), productFound.getName(), productFound.getImage());
+
         return Mono.just(productDto);
+
+//        return productRepository
+//                .findProductById(id)
+//                .map(productFound -> new ProductDto(productFound.getId(), productFound.getName(), productFound.getPrice().getValue().toString(),
+//                        productFound.getCategory().getTitle(), productFound.getName(), productFound.getImage()))
+//                .switchIfEmpty(Mono.error(ProductNotFoundException.with(String.format("Product with id %d not found", id))));
     }
 
     @Override
@@ -61,9 +68,11 @@ public class SelfManagedProductService implements ProductService{
                 .orElse(new Category(newProduct.getCategory()));
         Price price = new Price(Double.parseDouble(newProduct.getPrice()), Currency.RUPEE);
 
-        Product product = new Product(newProduct.getTitle(), categoryToBeSaved, price, newProduct.getImageUrl());
+        Product product = new Product(newProduct.getTitle(),
+                categoryToBeSaved, price, newProduct.getImageUrl());
 
         Product savedProduct = productRepository.save(product);
+
         return Mono.just(
                 new ProductDto(savedProduct.getId(), savedProduct.getName(), savedProduct.getPrice().getValue().toString(),
                         savedProduct.getCategory().getTitle(), savedProduct.getName(), savedProduct.getImage())
