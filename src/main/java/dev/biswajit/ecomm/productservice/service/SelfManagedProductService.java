@@ -111,4 +111,5 @@ public class SelfManagedProductService implements ProductService{
                 new ProductDto(product.getId(), product.getName(), product.getPrice().getValue().toString(),
                         product.getCategory().getTitle(), product.getName(), product.getImage()));
     }
+
 }
