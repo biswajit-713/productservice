@@ -1,9 +1,11 @@
 package dev.biswajit.ecomm.productservice.model;
 
+import com.mysql.cj.x.protobuf.MysqlxCursor;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -19,13 +21,15 @@ public class Product {
 
     private String name;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE},
-            fetch = FetchType.EAGER, optional = false)
+            fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "price_id", referencedColumnName = "id")
+    @BatchSize(size = 10)
+    @Fetch(FetchMode.SELECT)
     private Price price;
 
     private String image;
