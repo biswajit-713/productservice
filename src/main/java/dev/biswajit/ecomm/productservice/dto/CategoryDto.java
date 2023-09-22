@@ -9,7 +9,6 @@ import lombok.Setter;
 import java.util.UUID;
 
 @Builder
-@Getter
 public class CategoryDto {
     @JsonProperty(value = "id")
     private UUID categoryId;
