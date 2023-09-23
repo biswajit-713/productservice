@@ -1,6 +1,7 @@
 package dev.biswajit.ecomm.productservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +18,7 @@ public class ProductDto {
     private String title;
     private String price;
     private String category;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String description;
     @JsonProperty("image")
     private String imageUrl;

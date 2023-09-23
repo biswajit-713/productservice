@@ -1,9 +1,7 @@
 package dev.biswajit.ecomm.productservice.repository;
 
 import dev.biswajit.ecomm.productservice.model.Product;
-import org.hibernate.annotations.Fetch;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,4 +18,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("select p from Product p join fetch p.category c join fetch p.price pr where c.title=:title")
     List<Product> findProductsByCategory(@Param("title") String title);
 
+    @Query("select p from Product p join fetch p.category c join fetch p.price pr")
+    List<Product> findAllProducts();
 }

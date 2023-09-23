@@ -5,10 +5,12 @@ import dev.biswajit.ecomm.productservice.model.Category;
 import dev.biswajit.ecomm.productservice.model.Product;
 import dev.biswajit.ecomm.productservice.repository.CategoryRepository;
 import dev.biswajit.ecomm.productservice.repository.ProductRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CategoryServiceImpl implements CategoryService{
@@ -24,7 +26,9 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public Mono<List<Category>> allCategories() {
-        return Mono.just(categoryRepository.findAll());
+        return Mono.just(categoryRepository.findAll()
+                .stream()
+                .filter(category -> Objects.nonNull(category.getTitle())).toList());
     }
 
     @Override

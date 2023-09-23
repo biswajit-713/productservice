@@ -1,6 +1,5 @@
 package dev.biswajit.ecomm.productservice.model;
 
-import com.mysql.cj.x.protobuf.MysqlxCursor;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

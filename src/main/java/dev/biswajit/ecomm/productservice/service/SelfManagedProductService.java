@@ -36,8 +36,10 @@ public class SelfManagedProductService implements ProductService{
     }
 
     @Override
+    @Transactional
     public Mono<ProductDto> productBy(Long id) throws ProductNotFoundException {
 
+//        has N+1 query issue since each call to a product will fetch category and price details
         Product productFound = productRepository.findById(id)
                 .orElseThrow(() -> ProductNotFoundException.with(String.format("Product with %d not found", id)));
         ProductDto productDto = new ProductDto(productFound.getId(), productFound.getName(), productFound.getPrice().getValue().toString(),
@@ -45,16 +47,12 @@ public class SelfManagedProductService implements ProductService{
 
         return Mono.just(productDto);
 
-//        return productRepository
-//                .findProductById(id)
-//                .map(productFound -> new ProductDto(productFound.getId(), productFound.getName(), productFound.getPrice().getValue().toString(),
-//                        productFound.getCategory().getTitle(), productFound.getName(), productFound.getImage()))
-//                .switchIfEmpty(Mono.error(ProductNotFoundException.with(String.format("Product with id %d not found", id))));
     }
 
     @Override
     public Mono<List<ProductDto>> allProducts() {
-        return Mono.just(productRepository.findAll()
+
+        return Mono.just(productRepository.findAllProducts()
                 .stream()
                 .map(productFound -> new ProductDto(productFound.getId(), productFound.getName(), productFound.getPrice().getValue().toString(),
                         productFound.getCategory().getTitle(), productFound.getName(), productFound.getImage()))
@@ -80,6 +78,7 @@ public class SelfManagedProductService implements ProductService{
     }
 
     @Override
+    @Transactional
     public Mono<ProductDto> deleteBy(Long id) throws ProductNotFoundException {
 
         Mono<ProductDto> productDto = productBy(id);
@@ -90,6 +89,7 @@ public class SelfManagedProductService implements ProductService{
     }
 
     @Override
+    @Transactional
     public Mono<ProductDto> updateBy(Long id, ProductDto updateProductDto) throws ProductNotFoundException {
         Mono<ProductDto> productDto = productBy(id);
 
