@@ -6,6 +6,7 @@ import dev.biswajit.ecomm.productservice.exception.ProductNotFoundException;
 import dev.biswajit.ecomm.productservice.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthentication;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,7 @@ public class ProductController {
     }
 
     @GetMapping("/")
+    @PreAuthorize("hasRole('USER')")
     public Mono<List<ProductDto>> getAll(Authentication authentication) {
         return productService.allProducts();
     }
